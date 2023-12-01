@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap");
+
+* {
+  font-family: "Poppins", sans-serif;
+}
+
+.ant-btn-primary {
+  background-color: #7370fe;
+}
+
+.ant-btn-primary:hover {
+  background-color: #9593fb !important;
+}
+
+.error {
+  color: "#B31217" !important;
+}
