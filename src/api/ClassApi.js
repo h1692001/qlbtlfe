@@ -20,8 +20,13 @@ const ClassApi = {
     const url = `/classV/addMember`;
     return axiosClients.post(url, data);
   },
+  
   getMembersStudent: (id) => {
     const url = `/classV/getMembersStudent?classId=${id}`;
+    return axiosClients.get(url);
+  },
+  checknopbai: (id) => {
+    const url = `/classV/checknopbai?classId=${id}`;
     return axiosClients.get(url);
   },
 };

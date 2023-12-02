@@ -110,11 +110,20 @@ const ManageTeacher = () => {
 
     const [classes, setClasses] = useState([]);
     const [selectedClass, setSelectedClass] = useState();
+    const [nopbai,setNopbai]=useState([]);
     const fetchBtl = async () => {
         try {
             const res = await BTLApi.getAllBtl(selectedClass);
 
             setBtl(res);
+        } catch (e) {
+
+        }
+    }
+    const fetchNopbai = async () => {
+        try {
+            const res = await ClassApi.checknopbai(selectedClass);
+            setNopbai(res);
         } catch (e) {
 
         }
@@ -148,6 +157,11 @@ const ManageTeacher = () => {
                     fetchBtl();
                 }
             }}>Xem danh sách nộp</Button>
+            <Button type='primary' onClick={() => {
+                if (selectedClass) {
+                    fetchNopbai();
+                }
+            }}>Xem tình trạng nộp bài</Button>
         </div>
 
         <Table columns={columns} dataSource={btl} />

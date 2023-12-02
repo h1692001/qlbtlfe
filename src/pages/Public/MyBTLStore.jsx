@@ -160,7 +160,7 @@ const ManageBTLStore = () => {
 
                     <div>
                         <p style={{ marginBottom: '10px', fontWeight: '500', fontSize: '16px' }}>Chọn bài tập lớn</p>
-                        <input type='file' placeholder='Chọn bài tập lớn' accept='application/pdf' onChange={(e) => { setFile(e.target.files[0]) }}></input>
+                        <input type='file' placeholder='Chọn bài tập lớn'  onChange={(e) => { setFile(e.target.files[0]) }}></input>
                     </div>
                 </div>
             </Spin>
