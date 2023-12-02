@@ -43,18 +43,21 @@ function App() {
       {!isLoggedIn && (
         <Routes>
           <Route path="/login" element={<SignIn></SignIn>}></Route>
-          {/* <Route path="/signup" element={<SignUp></SignUp>}></Route> */}
         </Routes>
       )}
       {isLoggedIn && (
         <Routes>
          <Route path="/" element={<Public></Public>}>
-          <Route path="manageStudent" element={<ManageStudent></ManageStudent>}></Route>
-          <Route path="manageTeacher" element={<ManageTeacher></ManageTeacher>}></Route>
-          <Route path="manageClass" element={<ManageClass></ManageClass>}></Route>
-          <Route path="classMembers" element={<ClassMembers></ClassMembers>}></Route>
-          <Route path="manageBTLStu" element={<MyBTLStore></MyBTLStore>}></Route>
-          <Route path="" element={<ManageBTL></ManageBTL>}></Route>
+          {userCurrent?.role==="ADMIN"&&<>
+            <Route path="manageStudent" element={<ManageStudent></ManageStudent>}></Route>
+            <Route path="manageTeacher" element={<ManageTeacher></ManageTeacher>}></Route>
+            <Route path="manageClass" element={<ManageClass></ManageClass>}></Route>
+            <Route path="classMembers" element={<ClassMembers></ClassMembers>}></Route>
+            <Route path="" element={<ManageBTL></ManageBTL>}></Route>
+          </>}
+          {userCurrent?.role==="STUDENT"&&<>
+            <Route path="" element={<MyBTLStore></MyBTLStore>}></Route>
+          </>}
          </Route>
         </Routes>
       )}

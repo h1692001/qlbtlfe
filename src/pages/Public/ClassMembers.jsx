@@ -36,12 +36,12 @@ const ClassMember = () => {
     ];
 
     const [classes, setClasses] = useState([]);
+    const [selectedClass, setSelectedClass] = useState();
     const [majors, setMajors] = useState([]);
     const [faculties, setFaculties] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [newStudent, setNewStudent] = useState({});
     const [isModalCreateOpen, setIsModalCreateOpen] = useState(false);
-    const [selectedClass, setSelectedClass] = useState();
     const [students, setStudents] = useState([]);
     const [selecttedTab, setSelectedTab] = useState(1);
     const [selectedUser, setSelectedUser] = useState();

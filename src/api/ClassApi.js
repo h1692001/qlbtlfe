@@ -4,6 +4,10 @@ const ClassApi = {
     const url = `/classV`;
     return axiosClients.get(url);
   },
+  getAllByUser: (id) => {
+    const url = `/classV/getClassByUser?userId=${id}`;
+    return axiosClients.get(url);
+  },
   getAllMember: (id) => {
     const url = `/classV/getMembers?classId=${id}`;
     return axiosClients.get(url);
@@ -15,6 +19,10 @@ const ClassApi = {
   addMember: (data) => {
     const url = `/classV/addMember`;
     return axiosClients.post(url, data);
+  },
+  getMembersStudent: (id) => {
+    const url = `/classV/getMembersStudent?classId=${id}`;
+    return axiosClients.get(url);
   },
 };
 

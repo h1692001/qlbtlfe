@@ -103,11 +103,15 @@ const ManageClass = () => {
         validationSchema: SignupSchema,
         onSubmit: async (values) => {
             try {
+                setIsLoading(true);
                 const res = await ClassApi.createClass(values);
                 await fetchClasses();
-                Swal.fire("Thành công", "Đã thêm sinh viên thành công", 'success');
+                Swal.fire("Thành công", "Đã thêm lớp thành công", 'success');
+                setIsLoading(false);
             } catch (e) {
                 Swal.fire("Thất bại", "Có lỗi xảy ra! Thử lại sau", 'error');
+                setIsLoading(false);
+
             }
         },
     });

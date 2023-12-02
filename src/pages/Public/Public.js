@@ -84,7 +84,7 @@ const adminItems = [
 ];
 
 const studentItems = [
-  getItem("Kho Bài tập lớn của tôi", "/manageBTLStu", <TbBuildingWarehouse />),
+  getItem("Kho Bài tập lớn của tôi", "/", <TbBuildingWarehouse />),
 ];
 const App = () => {
   const [headerTitle, setHeaderTitle] = useState("Quản lí Bài tập lớn");
@@ -95,6 +95,7 @@ const App = () => {
       setMenu(adminItems);
     } else if (userCurrent?.role === "STUDENT") {
       setMenu(studentItems);
+      setHeaderTitle("Kho Bài tập lớn của tôi")
     }
   }, [userCurrent]);
 
@@ -123,7 +124,7 @@ const App = () => {
       key: "1",
       label: <Link to="/profile">Thông tin tài khoản</Link>,
     },
-    {
+    { 
       key: "2",
       label: (
         <div
