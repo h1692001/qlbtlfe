@@ -89,12 +89,14 @@ const ManageBTLStore = () => {
             key: 'submittedAt',
             dataIndex: 'submittedAt',
             render: (dt) => {
-                const inputDate = new Date(dt);
-                const year = inputDate.getFullYear();
-                const month = String(inputDate.getMonth() + 1).padStart(2, '0');
-                const day = String(inputDate.getDate()).padStart(2, '0');
-                const formattedDateString = `${year}/${month}/${day}`;
-                return formattedDateString;
+                if (dt) {
+                    const inputDate = new Date(dt);
+                    const year = inputDate.getFullYear();
+                    const month = String(inputDate.getMonth() + 1).padStart(2, '0');
+                    const day = String(inputDate.getDate()).padStart(2, '0');
+                    const formattedDateString = `${year}/${month}/${day}`;
+                    return formattedDateString;
+                }
             }
         },
 

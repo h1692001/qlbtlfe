@@ -91,14 +91,14 @@ const ManageTeacher = () => {
             title: 'Tên sinh viên ',
             dataIndex: 'member',
             key: 'member',
-            render:(dt)=>(<>{dt.fullname}</>)
+            render: (dt) => (<>{dt.fullname}</>)
         },
 
         {
             title: 'Mã sinh viên',
             key: 'member2',
             dataIndex: 'member',
-            render:(dt)=>(<>{dt.userId}</>)
+            render: (dt) => (<>{dt.userId}</>)
         },
         {
             title: 'Trạng thái nộp',
@@ -111,12 +111,14 @@ const ManageTeacher = () => {
             key: 'submittedAt',
             dataIndex: 'submittedAt',
             render: (dt) => {
-                const inputDate = new Date(dt);
-                const year = inputDate.getFullYear();
-                const month = String(inputDate.getMonth() + 1).padStart(2, '0');
-                const day = String(inputDate.getDate()).padStart(2, '0');
-                const formattedDateString = `${year}/${month}/${day}`;
-                return formattedDateString;
+                if (dt) {
+                    const inputDate = new Date(dt);
+                    const year = inputDate.getFullYear();
+                    const month = String(inputDate.getMonth() + 1).padStart(2, '0');
+                    const day = String(inputDate.getDate()).padStart(2, '0');
+                    const formattedDateString = `${year}/${month}/${day}`;
+                    return formattedDateString;
+                }
             }
         },
 
@@ -181,8 +183,8 @@ const ManageTeacher = () => {
             }}>Xem tình trạng nộp bài</Button>
         </div>
 
-       {tab===1&& <Table columns={columns} dataSource={btl} />}
-       {tab===2&& <Table columns={columnsCheckdanop} dataSource={nopbai} />}
+        {tab === 1 && <Table columns={columns} dataSource={btl} />}
+        {tab === 2 && <Table columns={columnsCheckdanop} dataSource={nopbai} />}
     </div>
 }
 
