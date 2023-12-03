@@ -26,11 +26,16 @@ const SignIn = () => {
     onSubmit: async (values) => {
       try {
         const res = await UserApi.login(values);
-        dispatch(login(res));
-        setTimeout(() => {
-          navigate('/');
+        if (res.status === 1) {
+          Swal.fire("Oops!", "Sai tài khoản/mật khẩu", 'error');
+        } else {
+          dispatch(login(res));
+          setTimeout(() => {
+            navigate('/');
 
-        }, 300)
+          }, 300)
+
+        }
       } catch (e) {
 
       }

@@ -7,29 +7,7 @@ import BTLApi from '../../api/BTLApi';
 import axios from 'axios';
 import { saveAs } from 'file-saver';
 
-const downloadFile = (fileUrl) => {
-    axios({
-        url: fileUrl,
-        method: 'GET',
-        responseType: 'blob',
-    })
-        .then((response) => {
-            const contentDisposition = response.headers['content-disposition'];
-            const match = contentDisposition && contentDisposition.match(/filename="(.+)"/);
-            const fileName = match ? match[1] : 'downloaded-file';
 
-            const url = window.URL.createObjectURL(new Blob([response.data]));
-            const link = document.createElement('a');
-
-            link.href = url;
-            link.setAttribute('download', fileName);
-            document.body.appendChild(link);
-            link.click();
-        })
-        .catch((error) => {
-            console.error('Error downloading file:', error);
-        });
-};
 const ManageTeacher = () => {
 
     const columns = [
@@ -108,9 +86,46 @@ const ManageTeacher = () => {
         },
     ];
 
+    const columnsCheckdanop = [
+        {
+            title: 'Tên sinh viên ',
+            dataIndex: 'member',
+            key: 'member',
+            render:(dt)=>(<>{dt.fullname}</>)
+        },
+
+        {
+            title: 'Mã sinh viên',
+            key: 'member2',
+            dataIndex: 'member',
+            render:(dt)=>(<>{dt.userId}</>)
+        },
+        {
+            title: 'Trạng thái nộp',
+            key: 'isSubmit',
+            dataIndex: 'isSubmit',
+            render: (dt) => (<>{dt === 1 ? "Đã nộp" : "Chưa nộp"}</>)
+        },
+        {
+            title: 'Ngày nộp',
+            key: 'submittedAt',
+            dataIndex: 'submittedAt',
+            render: (dt) => {
+                const inputDate = new Date(dt);
+                const year = inputDate.getFullYear();
+                const month = String(inputDate.getMonth() + 1).padStart(2, '0');
+                const day = String(inputDate.getDate()).padStart(2, '0');
+                const formattedDateString = `${year}/${month}/${day}`;
+                return formattedDateString;
+            }
+        },
+
+    ];
+
     const [classes, setClasses] = useState([]);
     const [selectedClass, setSelectedClass] = useState();
-    const [nopbai,setNopbai]=useState([]);
+    const [nopbai, setNopbai] = useState([]);
+    const [tab, setTab] = useState(1);
     const fetchBtl = async () => {
         try {
             const res = await BTLApi.getAllBtl(selectedClass);
@@ -120,6 +135,7 @@ const ManageTeacher = () => {
 
         }
     }
+
     const fetchNopbai = async () => {
         try {
             const res = await ClassApi.checknopbai(selectedClass);
@@ -145,7 +161,6 @@ const ManageTeacher = () => {
         }
     }
 
-
     useEffect(() => {
         fetchClasses();
     }, [])
@@ -155,16 +170,19 @@ const ManageTeacher = () => {
             <Button type='primary' onClick={() => {
                 if (selectedClass) {
                     fetchBtl();
+                    setTab(1);
                 }
             }}>Xem danh sách nộp</Button>
             <Button type='primary' onClick={() => {
                 if (selectedClass) {
                     fetchNopbai();
+                    setTab(2);
                 }
             }}>Xem tình trạng nộp bài</Button>
         </div>
 
-        <Table columns={columns} dataSource={btl} />
+       {tab===1&& <Table columns={columns} dataSource={btl} />}
+       {tab===2&& <Table columns={columnsCheckdanop} dataSource={nopbai} />}
     </div>
 }
 

@@ -2,6 +2,7 @@ import {
   AppstoreOutlined,
   MailOutlined,
   SettingOutlined,
+  SearchOutlined
 } from "@ant-design/icons";
 import Logo from "../../assets/logo.png";
 import { Breadcrumb, Layout, Menu, theme, Dropdown } from "antd";
@@ -85,6 +86,7 @@ const adminItems = [
 
 const studentItems = [
   getItem("Kho Bài tập lớn của tôi", "/", <TbBuildingWarehouse />),
+  getItem("Khai thác Bài tập lớn", "/search", <SearchOutlined />),
 ];
 const App = () => {
   const [headerTitle, setHeaderTitle] = useState("Quản lí Bài tập lớn");
