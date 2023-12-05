@@ -5,9 +5,11 @@
   "dependencies": {
     "antd": "^5.11.2",
     "axios": "^1.6.2",
+    "chart.js": "^4.4.0",
     "file-saver": "^2.0.5",
     "formik": "^2.2.9",
     "react": "^18.2.0",
+    "react-chartjs-2": "^5.2.0",
     "react-dnd": "^16.0.1",
     "react-dnd-html5-backend": "^16.0.1",
     "react-dom": "^18.2.0",

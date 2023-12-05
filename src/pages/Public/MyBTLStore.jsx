@@ -22,11 +22,11 @@ const ManageBTLStore = () => {
             title: 'Đăng bởi',
             key: 'publisher',
             dataIndex: 'publisher',
-            render: (data) => {
-                data.map(dt => {
-                    return <Tag key={dt.userId}>{dt.userId}</Tag>
-                })
-            }
+            render: (data) => <>
+                {data.map(dt => (
+                    <Tag key={dt.userId}>{dt.userId}</Tag>
+                ))}
+            </>
         },
         {
             title: 'Ngày đăng',

@@ -2,10 +2,19 @@ import {
   AppstoreOutlined,
   MailOutlined,
   SettingOutlined,
-  SearchOutlined
+  SearchOutlined,
 } from "@ant-design/icons";
 import Logo from "../../assets/logo.png";
-import { Breadcrumb, Layout, Menu, theme, Dropdown } from "antd";
+import {
+  Breadcrumb,
+  Layout,
+  Menu,
+  theme,
+  Dropdown,
+  Modal,
+  Spin,
+  Input,
+} from "antd";
 import { useState, useEffect } from "react";
 import { TbReportAnalytics } from "react-icons/tb";
 import { TbBuildingWarehouse } from "react-icons/tb";
@@ -16,6 +25,9 @@ import { Outlet, useNavigate, Link } from "react-router-dom";
 import { getCurrentUser, logout } from "../../store/actions/authAction";
 import UserApi from "../../api/UserApi";
 import styled from "styled-components";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import Swal from "sweetalert2";
 
 const StyledPublic = styled("div")`
   padding: 15px;
@@ -88,16 +100,36 @@ const studentItems = [
   getItem("Kho Bài tập lớn của tôi", "/", <TbBuildingWarehouse />),
   getItem("Khai thác Bài tập lớn", "/search", <SearchOutlined />),
 ];
+
+const teacherItems = [
+  getItem("Quản lí bài tập lớn", "/", <TbBuildingWarehouse />),
+  getItem("Khai thác Bài tập lớn", "/search", <SearchOutlined />),
+];
+
+const validationSchema = Yup.object().shape({
+  password0: Yup.string().required("Không để trống"),
+  password: Yup.string().required("Không để trống"),
+  password2: Yup.string().oneOf(
+    [Yup.ref("password"), null],
+    "Mật khẩu không khớp"
+  ),
+});
+
 const App = () => {
   const [headerTitle, setHeaderTitle] = useState("Quản lí Bài tập lớn");
   const [menu, setMenu] = useState([]);
   const { userCurrent } = useSelector((state) => state.auth);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isModalChangePassword, setIsModalChangePassword] = useState(false);
+
   useEffect(() => {
     if (userCurrent?.role === "ADMIN") {
       setMenu(adminItems);
     } else if (userCurrent?.role === "STUDENT") {
       setMenu(studentItems);
-      setHeaderTitle("Kho Bài tập lớn của tôi")
+      setHeaderTitle("Kho Bài tập lớn của tôi");
+    } else {
+      setMenu(teacherItems);
     }
   }, [userCurrent]);
 
@@ -124,9 +156,17 @@ const App = () => {
   const items = [
     {
       key: "1",
-      label: <Link to="/profile">Thông tin tài khoản</Link>,
+      label: (
+        <div
+          onClick={() => {
+            setIsModalChangePassword(true);
+          }}
+        >
+          Đổi mật khẩu{" "}
+        </div>
+      ),
     },
-    { 
+    {
       key: "2",
       label: (
         <div
@@ -152,6 +192,30 @@ const App = () => {
       navigate(e.key);
     }
   };
+
+  const formik = useFormik({
+    initialValues: {
+      password0: "",
+      password: "",
+      password2: "",
+    },
+    validationSchema: validationSchema,
+    onSubmit: async (values) => {
+      try {
+        setIsLoading(true);
+        const res = await UserApi.changePassword({
+          email: userCurrent?.email,
+          password: values.password,
+          currentPassword: values.password0,
+        });
+        Swal.fire("Yeah!", "Đã đổi mật khẩu thành công", "success");
+        setIsLoading(false);
+      } catch (e) {
+        Swal.fire("Oops!", "Có lỗi xảy ra! Thử lại sau", "error");
+        setIsLoading(false);
+      }
+    },
+  });
 
   return (
     <StyledPublic>
@@ -234,6 +298,62 @@ const App = () => {
           </Content>
         </Layout>
       </Layout>
+      <Modal
+        title="Đổi mật khẩu"
+        open={isModalChangePassword}
+        onOk={formik.handleSubmit}
+        onCancel={() => setIsModalChangePassword(false)}
+      >
+        <Spin spinning={isLoading}>
+          <div className="flex flex-col gap-[10px] mt-[8px]">
+            <div className="w-full flex flex-col gap-[8px]">
+              <Input.Password
+                className="py-[8px]"
+                placeholder="Mật khẩu hiện tại"
+                name="password0"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.password0}
+              />
+              {formik.touched.password0 && formik.errors.password0 && (
+                <div className="text-red-500 error-message">
+                  {formik.errors.password0}
+                </div>
+              )}
+            </div>
+            <div className="w-full flex flex-col gap-[8px]">
+              <Input.Password
+                className="py-[8px]"
+                placeholder="Mật khẩu mới"
+                name="password"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.password}
+              />
+              {formik.touched.password && formik.errors.password && (
+                <div className="text-red-500 error-message">
+                  {formik.errors.password}
+                </div>
+              )}
+            </div>
+            <div className="w-full flex flex-col gap-[8px]">
+              <Input.Password
+                className="py-[8px]"
+                placeholder="Nhập lại mật khẩu"
+                name="password2"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.password2}
+              />
+              {formik.touched.password2 && formik.errors.password2 && (
+                <div className="text-red-500 error-message">
+                  {formik.errors.password2}
+                </div>
+              )}
+            </div>
+          </div>
+        </Spin>
+      </Modal>
     </StyledPublic>
   );
 };

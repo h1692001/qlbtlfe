@@ -42,12 +42,50 @@ const ManageClass = () => {
             }
         },
         {
+            title: 'Trạng thái',
+            dataIndex: 'status',
+            key: 'status',
+            render: (dt) => {
+                if (dt === 1) {
+                    return <p>Vô hiệu</p>
+                } else {
+                    return <p>Đang hoạt động</p>
+                }
+            }
+        },
+        {
             title: '',
             key: 'action',
-            render: () => {
+            render: (record) => {
                 return <Space>
-                    <p className='text-[#1677ff] underline'>Cập nhật</p>
-                    <p className='text-[#1677ff] underline'>Vô hiệu</p>
+                    <p className='text-[#1677ff] underline'
+                        onClick={() => {
+                            setShowUpdateClassModal(true);
+                            setUpdateModalInfo(record)
+                        }}>Cập nhật</p>
+                    {record.status !== 1 && <p className='text-[#1677ff] underline'
+                        onClick={async () => {
+                            try {
+                                const res = await ClassApi.disable(record.id);
+                                fetchClasses();
+                                Swal.fire("Yeah!", "Lớp này đã bị vô hiệu", 'success')
+                            }
+                            catch (e) {
+                                Swal.fire("Oops", "Có lỗi xảy ra! Thử lại sau", 'error')
+
+                            }
+                        }}>Vô hiệu</p>}
+                    {record.status === 1 && <p className='text-[#1677ff] underline'
+                        onClick={async () => {
+                            try {
+                                const res = await ClassApi.enable(record.id);
+                                fetchClasses();
+                                Swal.fire("Yeah!", "Lớp này đã hoạt động", 'success')
+                            }
+                            catch (e) {
+                                Swal.fire("Oops", "Có lỗi xảy ra! Thử lại sau", 'error')
+                            }
+                        }}>Tái hoạt động</p>}
                 </Space>
             }
         },
@@ -55,6 +93,8 @@ const ManageClass = () => {
 
     const [classes, setClasses] = useState([]);
     const [majors, setMajors] = useState([]);
+    const [showUpdateClassModal, setShowUpdateClassModal] = useState(false);
+    const [updateModelInfo, setUpdateModalInfo] = useState({});
     const [faculties, setFaculties] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [newStudent, setNewStudent] = useState({});
@@ -62,7 +102,7 @@ const ManageClass = () => {
 
     const fetchClasses = async () => {
         try {
-            const res = await ClassApi.getAllClass();
+            const res = await ClassApi.getAllAdmin();
             setClasses(res);
         } catch (e) {
 
@@ -116,6 +156,31 @@ const ManageClass = () => {
         },
     });
 
+    const formik2 = useFormik({
+        initialValues: {
+            name: '',
+            majorId: undefined,
+            id:"",
+            createdAt:""
+        },
+        validationSchema: SignupSchema,
+        onSubmit: async (values) => {
+            try {
+                setIsLoading(true);
+                values.id=updateModelInfo.id
+                values.createdAt=updateModelInfo.createdAt
+                const res = await ClassApi.updateClass(values);
+                await fetchClasses();
+                Swal.fire("Thành công", "Đã sửa lớp thành công", 'success');
+                setIsLoading(false);
+            } catch (e) {
+                Swal.fire("Thất bại", "Có lỗi xảy ra! Thử lại sau", 'error');
+                setIsLoading(false);
+
+            }
+        },
+    });
+
     return <div >
         <div className='py-[12px]'>
             <Button type='primary' onClick={() => { setIsModalCreateOpen(true) }}>Thêm lớp</Button>
@@ -150,6 +215,39 @@ const ManageClass = () => {
                     />
                     {formik.touched.majorId && formik.errors.majorId ? (
                         <div className='error text-[#B31217]'>{formik.errors.majorId}</div>
+                    ) : null}
+                </div>
+            </Spin>
+        </Modal>
+        <Modal title='Sửa thông tin lớp' open={showUpdateClassModal} onOk={formik2.handleSubmit} onCancel={() => setShowUpdateClassModal(false)}>
+            <Spin spinning={isLoading}>
+                <div style={{ marginTop: '20px' }}>
+                    <p style={{ marginBottom: '10px', fontWeight: '500', fontSize: '16px' }}>Tên lớp</p>
+                    <Input
+                        value={formik2.values.name}
+                        onChange={formik2.handleChange}
+                        onBlur={formik2.handleBlur}
+                        name='name'
+                    />
+                    {formik2.touched.name && formik2.errors.name ? (
+                        <div className='error text-[#B31217]'>{formik2.errors.name}</div>
+                    ) : null}
+                </div>
+                <div style={{ marginTop: '20px' }}>
+                    <p style={{ marginBottom: '10px', fontWeight: '500', fontSize: '16px' }}>Ngành</p>
+                    <Select
+                        placeholder='Chọn ngành'
+                        onChange={(value) => formik2.setFieldValue('majorId', value)}
+                        options={majors}
+                        style={{
+                            width: '100%',
+                        }}
+                        onBlur={formik2.handleBlur}
+                        value={formik2.values.majorId}
+                        name='majorId'
+                    />
+                    {formik2.touched.majorId && formik2.errors.majorId ? (
+                        <div className='error text-[#B31217]'>{formik2.errors.majorId}</div>
                     ) : null}
                 </div>
             </Spin>

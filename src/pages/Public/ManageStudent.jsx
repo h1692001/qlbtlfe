@@ -26,7 +26,7 @@ const ManageStudent = () => {
             title: 'Ngành',
             dataIndex: 'faculty',
             key: 'faculty',
-            render:(dt)=>{
+            render: (dt) => {
                 return <>{dt.name}</>
             }
         },
@@ -34,17 +34,55 @@ const ManageStudent = () => {
             title: 'Khoa',
             dataIndex: 'major',
             key: 'major',
-            render:(dt)=>{
+            render: (dt) => {
                 return <>{dt.majorName}</>
+            }
+        },
+        {
+            title: 'Trạng thái',
+            dataIndex: 'status',
+            key: 'status',
+            render: (dt) => {
+                if (dt === 1) {
+                    return <p>Vô hiệu</p>
+                } else {
+                    return <p>Đang hoạt động</p>
+                }
             }
         },
         {
             title: '',
             key: 'action',
-            render: () => {
+            render: (record) => {
                 return <Space>
-                    <p className='text-[#1677ff] underline'>Cập nhật</p>
-                    <p className='text-[#1677ff] underline'>Vô hiệu</p>
+                    <p className='text-[#1677ff] underline'
+                        onClick={() => {
+                            setShowUpdateClassModal(true);
+                            setUpdateModalInfo(record)
+                        }}>Cập nhật</p>
+                    {record.status !== 1 && <p className='text-[#1677ff] underline'
+                        onClick={async () => {
+                            try {
+                                const res = await UserApi.disable(record.id);
+                                fetchStudents();
+                                Swal.fire("Yeah!", "Tài khoản sinh viên này đã bị vô hiệu", 'success')
+                            }
+                            catch (e) {
+                                Swal.fire("Oops", "Có lỗi xảy ra! Thử lại sau", 'error')
+
+                            }
+                        }}>Vô hiệu</p>}
+                    {record.status === 1 && <p className='text-[#1677ff] underline'
+                        onClick={async () => {
+                            try {
+                                const res = await UserApi.enable(record.id);
+                                fetchStudents();
+                                Swal.fire("Yeah!", "Tài khoản sinh viên này đã hoạt động", 'success')
+                            }
+                            catch (e) {
+                                Swal.fire("Oops", "Có lỗi xảy ra! Thử lại sau", 'error')
+                            }
+                        }}>Tái hoạt động</p>}
                 </Space>
             }
         },
@@ -56,6 +94,9 @@ const ManageStudent = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [newStudent, setNewStudent] = useState({});
     const [isModalCreateOpen, setIsModalCreateOpen] = useState(false);
+
+    const [showUpdateClassModal, setShowUpdateClassModal] = useState(false);
+    const [updateModelInfo, setUpdateModalInfo] = useState({});
 
     const fetchStudents = async () => {
         try {
@@ -107,6 +148,27 @@ const ManageStudent = () => {
                 const res = await UserApi.signupStudent(values);
                 await fetchStudents();
                 Swal.fire("Thành công", "Đã thêm sinh viên thành công", 'success');
+            } catch (e) {
+                Swal.fire("Thất bại", "Có lỗi xảy ra! Thử lại sau", 'error');
+            }
+        },
+    });
+
+    const formik2 = useFormik({
+        initialValues: {
+            fullname: '',
+            studentId: '',
+            email: '',
+            majorId: undefined,
+            id: ""
+        },
+        validationSchema: SignupSchema,
+        onSubmit: async (values) => {
+            try {
+                values.id=updateModelInfo.id
+                const res = await UserApi.updateStudent(values);
+                await fetchStudents();
+                Swal.fire("Thành công", "Đã sửa thông tin sinh viên thành công", 'success');
             } catch (e) {
                 Swal.fire("Thất bại", "Có lỗi xảy ra! Thử lại sau", 'error');
             }
@@ -167,6 +229,60 @@ const ManageStudent = () => {
                     />
                     {formik.touched.majorId && formik.errors.majorId ? (
                         <div className='error text-[#B31217]'>{formik.errors.majorId}</div>
+                    ) : null}
+                </div>
+            </Spin>
+        </Modal>
+
+        <Modal title='Sửa thông tin sinh viên' open={showUpdateClassModal} onOk={formik2.handleSubmit} onCancel={() => setShowUpdateClassModal(false)}>
+            <Spin spinning={isLoading}>
+                <div style={{ marginTop: '20px' }}>
+                    <p style={{ marginBottom: '10px', fontWeight: '500', fontSize: '16px' }}>Họ tên sinh viên</p>
+                    <Input
+                        value={formik2.values.fullname}
+                        onChange={formik2.handleChange}
+                        onBlur={formik2.handleBlur}
+                        name='fullname'
+                    />
+                    {formik2.touched.fullname && formik2.errors.fullname ? (
+                        <div className='error text-[#B31217]'>{formik2.errors.fullname}</div>
+                    ) : null}
+                </div>
+                <div style={{ marginTop: '20px' }}>
+                    <p style={{ marginBottom: '10px', fontWeight: '500', fontSize: '16px' }}>Mã sinh viên</p>
+                    <Input
+                        value={formik2.values.studentId}
+                        onChange={formik2.handleChange}
+                        onBlur={formik2.handleBlur}
+                        name='studentId'
+                    />
+                    {formik2.touched.studentId && formik2.errors.studentId ? (
+                        <div className='error text-[#B31217]'>{formik2.errors.studentId}</div>
+                    ) : null}
+                </div>
+                <div style={{ marginTop: '20px' }}>
+                    <p style={{ marginBottom: '10px', fontWeight: '500', fontSize: '16px' }}>Email</p>
+                    <Input value={formik2.values.email} onChange={formik2.handleChange} onBlur={formik2.handleBlur} name='email' />
+                    {formik2.touched.email && formik2.errors.email ? (
+                        <div className='error text-[#B31217]'>{formik2.errors.email}</div>
+                    ) : null}
+                </div>
+
+                <div style={{ marginTop: '20px' }}>
+                    <p style={{ marginBottom: '10px', fontWeight: '500', fontSize: '16px' }}>Ngành</p>
+                    <Select
+                        placeholder='Chọn ngành'
+                        onChange={(value) => formik2.setFieldValue('majorId', value)}
+                        options={majors}
+                        style={{
+                            width: '100%',
+                        }}
+                        onBlur={formik2.handleBlur}
+                        value={formik2.values.majorId}
+                        name='majorId'
+                    />
+                    {formik2.touched.majorId && formik2.errors.majorId ? (
+                        <div className='error text-[#B31217]'>{formik2.errors.majorId}</div>
                     ) : null}
                 </div>
             </Spin>

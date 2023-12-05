@@ -4,6 +4,10 @@ const ClassApi = {
     const url = `/classV`;
     return axiosClients.get(url);
   },
+  getAllAdmin: () => {
+    const url = `/classV/getAllAdmin`;
+    return axiosClients.get(url);
+  },
   getAllByUser: (id) => {
     const url = `/classV/getClassByUser?userId=${id}`;
     return axiosClients.get(url);
@@ -16,6 +20,10 @@ const ClassApi = {
     const url = `/classV`;
     return axiosClients.post(url, data);
   },
+  updateClass: (data) => {
+    const url = `/classV`;
+    return axiosClients.put(url, data);
+  },
   addMember: (data) => {
     const url = `/classV/addMember`;
     return axiosClients.post(url, data);
@@ -27,6 +35,14 @@ const ClassApi = {
   },
   checknopbai: (id) => {
     const url = `/classV/checknopbai?classId=${id}`;
+    return axiosClients.get(url);
+  },
+  enable: (id) => {
+    const url = `/classV/enableClass?classId=${id}`;
+    return axiosClients.get(url);
+  },
+  disable: (id) => {
+    const url = `/classV/disableClass?classId=${id}`;
     return axiosClients.get(url);
   },
 };

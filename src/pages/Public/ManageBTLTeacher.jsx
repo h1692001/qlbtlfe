@@ -3,12 +3,10 @@ import { Table, Space, Button, Select, Tag } from 'antd';
 import { useState, useEffect } from 'react';
 import ClassApi from '../../api/ClassApi';
 import BTLApi from '../../api/BTLApi';
-
-import axios from 'axios';
-import { saveAs } from 'file-saver';
+import { useSelector } from 'react-redux';
 
 
-const ManageTeacher = () => {
+const ManageBTLTeacher = () => {
 
     const columns = [
         {
@@ -21,11 +19,11 @@ const ManageTeacher = () => {
             title: 'Đăng bởi',
             key: 'publisher',
             dataIndex: 'publisher',
-            render: (data) => <>
-                {data.map(dt => (
-                    <Tag key={dt.userId}>{dt.userId}</Tag>
-                ))}
-            </>
+            render: (data) => {
+                data.map(dt => {
+                    return <Tag key={dt.userId}>{dt.userId}</Tag>
+                })
+            }
         },
         {
             title: 'Ngày đăng',
@@ -146,10 +144,11 @@ const ManageTeacher = () => {
 
         }
     }
+    const {userCurrent}=useSelector(state=>state.auth);
     const [btl, setBtl] = useState([]);
     const fetchClasses = async () => {
         try {
-            const res = await ClassApi.getAllClass();
+            const res = await ClassApi.getAllByUser(userCurrent?.id);
             const categoryOption = [];
             res.forEach(dt => {
                 categoryOption.push({
@@ -188,4 +187,4 @@ const ManageTeacher = () => {
     </div>
 }
 
-export default ManageTeacher;
+export default ManageBTLTeacher;

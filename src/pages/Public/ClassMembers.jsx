@@ -28,7 +28,6 @@ const ClassMember = () => {
             key: 'action',
             render: () => {
                 return <Space>
-                    <p className='text-[#1677ff] underline'>Cập nhật</p>
                     <p className='text-[#1677ff] underline'>Vô hiệu</p>
                 </Space>
             }
@@ -49,7 +48,7 @@ const ClassMember = () => {
     
     const fetchClasses = async () => {
         try {
-            const res = await ClassApi.getAllClass();
+            const res = await ClassApi.getAllAdmin();
             const categoryOption = [];
             res.forEach(dt => {
                 categoryOption.push({

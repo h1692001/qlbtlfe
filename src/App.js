@@ -13,6 +13,11 @@ import ManageBTL from "./pages/Public/ManageBTL";
 import ManageClass from "./pages/Public/ManageClass";
 import ClassMembers from "./pages/Public/ClassMembers";
 import MyBTLStore from "./pages/Public/MyBTLStore";
+import Statistics from "./pages/Public/Statistics";
+import ForgotPassword from "./pages/Auth/ForgotPassword";
+import ResetPassword from "./pages/Auth/ResetPassword";
+import ManageBTLTeacher from "./pages/Public/ManageBTLTeacher";
+import SearchBTL from "./pages/Public/SearchBTL";
 
 function App() {
   const { isLoggedIn, userCurrent } = useSelector((state) => state.auth);
@@ -31,7 +36,7 @@ function App() {
   };
 
   useEffect(() => {
-    if (!isLoggedIn) {
+    if (!isLoggedIn && window.location.href.split("/")[3] !== "reset") {
       navigate("/login");
     } else if (isLoggedIn) {
       checkAccess();
@@ -43,22 +48,58 @@ function App() {
       {!isLoggedIn && (
         <Routes>
           <Route path="/login" element={<SignIn></SignIn>}></Route>
+          <Route
+            path="/forgotPassword"
+            element={<ForgotPassword></ForgotPassword>}
+          ></Route>
+          <Route
+            path="/reset/:token"
+            element={<ResetPassword></ResetPassword>}
+          ></Route>
         </Routes>
       )}
       {isLoggedIn && (
         <Routes>
-         <Route path="/" element={<Public></Public>}>
-          {userCurrent?.role==="ADMIN"&&<>
-            <Route path="manageStudent" element={<ManageStudent></ManageStudent>}></Route>
-            <Route path="manageTeacher" element={<ManageTeacher></ManageTeacher>}></Route>
-            <Route path="manageClass" element={<ManageClass></ManageClass>}></Route>
-            <Route path="classMembers" element={<ClassMembers></ClassMembers>}></Route>
-            <Route path="" element={<ManageBTL></ManageBTL>}></Route>
-          </>}
-          {userCurrent?.role==="STUDENT"&&<>
-            <Route path="" element={<MyBTLStore></MyBTLStore>}></Route>
-          </>}
-         </Route>
+          <Route path="/" element={<Public></Public>}>
+            {userCurrent?.role === "ADMIN" && (
+              <>
+                <Route
+                  path="manageStudent"
+                  element={<ManageStudent></ManageStudent>}
+                ></Route>
+                <Route
+                  path="manageTeacher"
+                  element={<ManageTeacher></ManageTeacher>}
+                ></Route>
+                <Route
+                  path="manageClass"
+                  element={<ManageClass></ManageClass>}
+                ></Route>
+                <Route
+                  path="classMembers"
+                  element={<ClassMembers></ClassMembers>}
+                ></Route>
+                <Route
+                  path="statistic"
+                  element={<Statistics></Statistics>}
+                ></Route>
+                <Route path="" element={<ManageBTL></ManageBTL>}></Route>
+              </>
+            )}
+            {userCurrent?.role === "STUDENT" && (
+              <>
+                <Route path="" element={<MyBTLStore></MyBTLStore>}></Route>
+                <Route path="/search" element={<SearchBTL></SearchBTL>}></Route>
+
+              </>
+            )}
+            {userCurrent?.role === "TEACHER" && (
+              <>
+                <Route path="" element={<ManageBTLTeacher></ManageBTLTeacher>}></Route>
+                <Route path="/search" element={<SearchBTL></SearchBTL>}></Route>
+              </>
+            )}
+          </Route>
         </Routes>
       )}
     </>

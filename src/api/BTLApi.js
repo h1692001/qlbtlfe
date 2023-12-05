@@ -11,7 +11,11 @@ const BTLApi = {
   },
   changeStatus: (data) => {
     const url = `/btl/changeStatus`;
-    return axiosClients.post(url, data );
+    return axiosClients.post(url, data);
+  },
+  search: (data) => {
+    const url = `/btl/searchBTL?name=${data?.name}&classId=${data?.classId}`;
+    return axiosClients.get(url);
   },
 };
 
