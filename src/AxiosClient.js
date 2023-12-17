@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const axiosClients = axios.create({
-  baseURL: 'http://localhost:8080',
+  baseURL: 'https://qlbtlbe-production.up.railway.app',
 });
 
 axiosClients.interceptors.request.use(async (config) => {
