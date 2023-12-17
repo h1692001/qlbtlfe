@@ -7,14 +7,139 @@ import MajorApi from '../../api/MajorApi';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import Swal from 'sweetalert2';
+import ClassApi from '../../api/ClassApi';
+
 
 const ManageStudent = () => {
 
+
+    const [students, setStudents] = useState([]);
+    const [majors, setMajors] = useState([]);
+    const [faculties, setFaculties] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
+    const [newStudent, setNewStudent] = useState({});
+    const [isModalCreateOpen, setIsModalCreateOpen] = useState(false);
+    const [classes, setClasses] = useState([]);
+    const [selectedClass, setSelectedClass] = useState();
+
+    const [showUpdateClassModal, setShowUpdateClassModal] = useState(false);
+    const [updateModelInfo, setUpdateModalInfo] = useState({});
+
+    const fetchStudents = async () => {
+        try {
+            const res = await UserApi.getAllStudents();
+            setStudents(res);
+        } catch (e) {
+
+        }
+    }
+
+    const fetchMajors = async () => {
+        try {
+            const res = await MajorApi.getAllMajor();
+            const categoryOption = [];
+            res.forEach(dt => {
+                categoryOption.push({
+                    value: dt.id,
+                    label: dt.majorName
+                })
+            })
+            setMajors(categoryOption);
+        } catch (e) {
+
+        }
+    }
+
+    useEffect(() => {
+        fetchStudents();
+        fetchMajors();
+        fetchClasses();
+    }, [])
+
+    const SignupSchema = Yup.object().shape({
+        fullname: Yup.string().required('Họ tên sinh viên là bắt buộc'),
+        studentId: Yup.string().required('Mã sinh viên là bắt buộc'),
+        email: Yup.string().email('Email không hợp lệ').required('Email là bắt buộc'),
+        majorId: Yup.string().required('Ngành học là bắt buộc'),
+    });
+
+    const formik = useFormik({
+        initialValues: {
+            fullname: '',
+            studentId: '',
+            email: '',
+            majorId: undefined,
+        },
+        validationSchema: SignupSchema,
+        onSubmit: async (values) => {
+            try {
+                const res = await UserApi.signupStudent(values);
+                await fetchStudents();
+                Swal.fire("Thành công", "Đã thêm sinh viên thành công", 'success');
+            } catch (e) {
+                Swal.fire("Thất bại", "Có lỗi xảy ra! Thử lại sau", 'error');
+            }
+        },
+    });
+
+    const formik2 = useFormik({
+        initialValues: {
+            fullname: '',
+            studentId: '',
+            email: '',
+            majorId: undefined,
+            id: ""
+        },
+        validationSchema: SignupSchema,
+        onSubmit: async (values) => {
+            try {
+                values.id = updateModelInfo.id
+                const res = await UserApi.updateStudent(values);
+                await fetchStudents();
+                Swal.fire("Thành công", "Đã sửa thông tin sinh viên thành công", 'success');
+            } catch (e) {
+                Swal.fire("Thất bại", "Có lỗi xảy ra! Thử lại sau", 'error');
+            }
+        },
+    });
+
+    const fetchClasses = async () => {
+        try {
+            const res = await ClassApi.getAllAdmin();
+            const categoryOption = [];
+            res.forEach(dt => {
+                categoryOption.push({
+                    value: dt.id,
+                    label: dt.name
+                })
+            })
+            setClasses(categoryOption);
+        } catch (e) {
+
+        }
+    }
+    const uniqueNamesMap = new Map();
+
+    const newArray = students.reduce((acc, obj) => {
+        const name = obj.fullname;
+
+        if (!uniqueNamesMap.has(name)) {
+            uniqueNamesMap.set(name, { text: name, value: name });
+            acc.push(uniqueNamesMap.get(name));
+        }
+
+        return acc;
+    }, []);
     const columns = [
         {
             title: 'Tên sinh viên',
             dataIndex: 'fullname',
             key: 'fullname',
+            filterSearch: true,
+            filters: newArray.map((value) => value),
+            onFilter: (value, record) => {
+                return record.fullname === value;
+            },
         },
         {
             title: 'Mã sinh viên',
@@ -88,96 +213,28 @@ const ManageStudent = () => {
         },
     ];
 
-    const [students, setStudents] = useState([]);
-    const [majors, setMajors] = useState([]);
-    const [faculties, setFaculties] = useState([]);
-    const [isLoading, setIsLoading] = useState(false);
-    const [newStudent, setNewStudent] = useState({});
-    const [isModalCreateOpen, setIsModalCreateOpen] = useState(false);
-
-    const [showUpdateClassModal, setShowUpdateClassModal] = useState(false);
-    const [updateModelInfo, setUpdateModalInfo] = useState({});
-
-    const fetchStudents = async () => {
+    const fetchMember = async () => {
         try {
-            const res = await UserApi.getAllStudents();
-            setStudents(res);
-        } catch (e) {
+            const res = await ClassApi.getMembersStudent(selectedClass);
+            setStudents(res.map(dt=>dt.member));
+        }
+        catch (e) {
 
         }
     }
-
-    const fetchMajors = async () => {
-        try {
-            const res = await MajorApi.getAllMajor();
-            const categoryOption = [];
-            res.forEach(dt => {
-                categoryOption.push({
-                    value: dt.id,
-                    label: dt.majorName
-                })
-            })
-            setMajors(categoryOption);
-        } catch (e) {
-
-        }
-    }
-
-    useEffect(() => {
-        fetchStudents();
-        fetchMajors();
-    }, [])
-
-    const SignupSchema = Yup.object().shape({
-        fullname: Yup.string().required('Họ tên sinh viên là bắt buộc'),
-        studentId: Yup.string().required('Mã sinh viên là bắt buộc'),
-        email: Yup.string().email('Email không hợp lệ').required('Email là bắt buộc'),
-        majorId: Yup.string().required('Ngành học là bắt buộc'),
-    });
-
-    const formik = useFormik({
-        initialValues: {
-            fullname: '',
-            studentId: '',
-            email: '',
-            majorId: undefined,
-        },
-        validationSchema: SignupSchema,
-        onSubmit: async (values) => {
-            try {
-                const res = await UserApi.signupStudent(values);
-                await fetchStudents();
-                Swal.fire("Thành công", "Đã thêm sinh viên thành công", 'success');
-            } catch (e) {
-                Swal.fire("Thất bại", "Có lỗi xảy ra! Thử lại sau", 'error');
-            }
-        },
-    });
-
-    const formik2 = useFormik({
-        initialValues: {
-            fullname: '',
-            studentId: '',
-            email: '',
-            majorId: undefined,
-            id: ""
-        },
-        validationSchema: SignupSchema,
-        onSubmit: async (values) => {
-            try {
-                values.id=updateModelInfo.id
-                const res = await UserApi.updateStudent(values);
-                await fetchStudents();
-                Swal.fire("Thành công", "Đã sửa thông tin sinh viên thành công", 'success');
-            } catch (e) {
-                Swal.fire("Thất bại", "Có lỗi xảy ra! Thử lại sau", 'error');
-            }
-        },
-    });
 
     return <div >
-        <div className='py-[12px]'>
+        <div className='py-[12px] flex items-center gap-[18px]'>
             <Button type='primary' onClick={() => { setIsModalCreateOpen(true) }}>Thêm sinh viên</Button>
+            <div className='py-[12px] flex gap-[20px]'>
+                <Select className='w-[300px]' options={classes} placeholder='Chọn lớp' onChange={(e) => { setSelectedClass(e) }}></Select>
+                <Button type='primary' onClick={() => {
+                    if (selectedClass) {
+                        fetchMember();
+                    }
+                }}>Xem sinh viên</Button>
+                
+            </div>
         </div>
         <Table columns={columns} dataSource={students} />
         <Modal title='Thêm sinh viên' open={isModalCreateOpen} onOk={formik.handleSubmit} onCancel={() => setIsModalCreateOpen(false)}>

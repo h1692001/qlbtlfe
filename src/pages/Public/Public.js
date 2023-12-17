@@ -210,6 +210,8 @@ const App = () => {
         });
         Swal.fire("Yeah!", "Đã đổi mật khẩu thành công", "success");
         setIsLoading(false);
+        setIsModalChangePassword(false);
+        formik.resetForm()
       } catch (e) {
         Swal.fire("Oops!", "Có lỗi xảy ra! Thử lại sau", "error");
         setIsLoading(false);

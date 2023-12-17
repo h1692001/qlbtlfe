@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
+import LogApi from "../../api/LogApi";
 import { DatePicker } from "antd";
 import dayjs from "dayjs";
-import LogApi from "../../api/LogApi";
 import {
   Chart as ChartJS, ArcElement, Tooltip, Legend, CategoryScale,
   LinearScale,
@@ -185,7 +185,7 @@ const Statistic = () => {
         ],
       });
     } catch (e) {
-      // Xử lý lỗi nếu cần
+     
     }
   };
 
