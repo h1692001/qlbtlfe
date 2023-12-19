@@ -28,6 +28,14 @@ const ManageTeacher = () => {
             </>
         },
         {
+            title: 'Môn',
+            key: 'subjectDTO',
+            dataIndex: 'subjectDTO',
+            render: (data) => {
+                return <p>{data?.name}</p>
+            }
+        },
+        {
             title: 'Ngày đăng',
             key: 'createdAt',
             dataIndex: 'createdAt',
@@ -99,6 +107,12 @@ const ManageTeacher = () => {
             key: 'member2',
             dataIndex: 'member',
             render: (dt) => (<>{dt.userId}</>)
+        },
+        {
+            title: 'Môn',
+            key: 'name',
+            dataIndex: 'name',
+
         },
         {
             title: 'Trạng thái nộp',

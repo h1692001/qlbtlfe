@@ -87,11 +87,12 @@ const adminItems = [
   getItem("Quản lí Bài tập lớn", "/", <TbBuildingWarehouse />),
   getItem("Quản lí tài khoản", "sub2", <AppstoreOutlined />, [
     getItem("Quản lí sinh viên", "/manageStudent"),
-    getItem("Quản lí giáo viên", "/manageTeacher"),
+    getItem("Quản lí giảng viên", "/manageTeacher"),
   ]),
   getItem("Quản lí lớp học", "sub3", <AppstoreOutlined />, [
     getItem("Danh sách lớp", "/manageClass"),
     getItem("Danh sách thành viên lớp", "/classMembers"),
+    getItem("Danh sách môn học", "/manageSubject"),
   ]),
   getItem("Báo cáo thống kê", "/statistic", <TbReportAnalytics />),
 ];
@@ -211,7 +212,7 @@ const App = () => {
         Swal.fire("Yeah!", "Đã đổi mật khẩu thành công", "success");
         setIsLoading(false);
         setIsModalChangePassword(false);
-        formik.resetForm()
+        formik.resetForm();
       } catch (e) {
         Swal.fire("Oops!", "Có lỗi xảy ra! Thử lại sau", "error");
         setIsLoading(false);

@@ -1,11 +1,14 @@
-import axios from 'axios';
+import axios from "axios";
 
 const axiosClients = axios.create({
   baseURL: 'https://qlbtlbe-production.up.railway.app',
+  // baseURL: "http://localhost:8080",
 });
 
 axiosClients.interceptors.request.use(async (config) => {
-  let token = window.localStorage.getItem('persist:auth') && JSON.parse(window.localStorage.getItem('persist:auth'))?.accessToken;
+  let token =
+    window.localStorage.getItem("persist:auth") &&
+    JSON.parse(window.localStorage.getItem("persist:auth"))?.accessToken;
   if (token) token = token.slice(1, token.length - 1);
   config.headers = {
     authorization: token,

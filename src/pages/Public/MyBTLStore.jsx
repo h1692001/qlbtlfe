@@ -8,6 +8,7 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import Swal from 'sweetalert2';
 import { useSelector } from 'react-redux';
+import SubjectApi from '../../api/SubjectApi';
 
 const ManageBTLStore = () => {
 
@@ -28,6 +29,7 @@ const ManageBTLStore = () => {
                 ))}
             </>
         },
+        
         {
             title: 'Ngày đăng',
             key: 'createdAt',
@@ -45,6 +47,7 @@ const ManageBTLStore = () => {
                 return formattedDateString;
             }
         },
+        
         {
             title: 'Trạng thái',
             dataIndex: 'status',
@@ -78,6 +81,7 @@ const ManageBTLStore = () => {
             dataIndex: 'member',
             render: (dt) => (<>{dt.userId}</>)
         },
+        
         {
             title: 'Trạng thái nộp',
             key: 'isSubmit',
@@ -114,7 +118,7 @@ const ManageBTLStore = () => {
     const [tab, setTab] = useState(1);
     const fetchNopbai = async () => {
         try {
-            const res = await ClassApi.checknopbai(selectedClass);
+            const res = await ClassApi.checknopbaiSubject(selectedClass);
             setNopbai(res);
         } catch (e) {
 
@@ -122,7 +126,7 @@ const ManageBTLStore = () => {
     }
     const fetchMember = async () => {
         try {
-            const res = await ClassApi.getMembersStudent(selectedClass);
+            const res = await ClassApi.checknopbaiSubject(selectedClass);
             const categoryOption = [];
             res.forEach(dt => {
                 categoryOption.push({
@@ -140,7 +144,7 @@ const ManageBTLStore = () => {
 
     const fetchClasses = async () => {
         try {
-            const res = await ClassApi.getAllByUser(userCurrent?.id);
+            const res = await SubjectApi.getAllSubjectByUser(userCurrent?.id);
             const categoryOption = [];
             res.forEach(dt => {
                 categoryOption.push({
@@ -155,7 +159,7 @@ const ManageBTLStore = () => {
     }
     const fetchBtl = async () => {
         try {
-            const res = await BTLApi.getAllBtl(selectedClass);
+            const res = await BTLApi.getAllBtlSubject(selectedClass);
 
             setBtl(res);
         } catch (e) {
@@ -192,7 +196,7 @@ const ManageBTLStore = () => {
 
     return <div >
         <div className='py-[12px] flex gap-[20px]'>
-            <Select className='w-[300px]' options={classes} placeholder='Chọn lớp' onChange={(e) => { setSelectedClass(e) }}></Select>
+            <Select className='w-[300px]' options={classes} placeholder='Chọn môn' onChange={(e) => { setSelectedClass(e) }}></Select>
             <Button type='primary' onClick={() => {
                 if (selectedClass) {
                     fetchBtl();
@@ -221,7 +225,7 @@ const ManageBTLStore = () => {
                         options={classes}
                         className='w-full'
                         showSearch
-                        placeholder="Chọn lớp"
+                        placeholder="Chọn môn"
                         optionFilterProp="children"
                         filterOption={(input, option) => (option?.label.trim().toLowerCase() ?? '').includes(input.trim().toLowerCase())}
                         filterSort={(optionA, optionB) =>

@@ -18,6 +18,7 @@ import ForgotPassword from "./pages/Auth/ForgotPassword";
 import ResetPassword from "./pages/Auth/ResetPassword";
 import ManageBTLTeacher from "./pages/Public/ManageBTLTeacher";
 import SearchBTL from "./pages/Public/SearchBTL";
+import ManageSubject from "./pages/Public/ManageSubject";
 
 function App() {
   const { isLoggedIn, userCurrent } = useSelector((state) => state.auth);
@@ -83,6 +84,10 @@ function App() {
                   path="statistic"
                   element={<Statistics></Statistics>}
                 ></Route>
+                <Route
+                  path="manageSubject"
+                  element={<ManageSubject></ManageSubject>}
+                ></Route>
                 <Route path="" element={<ManageBTL></ManageBTL>}></Route>
               </>
             )}
@@ -90,12 +95,14 @@ function App() {
               <>
                 <Route path="" element={<MyBTLStore></MyBTLStore>}></Route>
                 <Route path="/search" element={<SearchBTL></SearchBTL>}></Route>
-
               </>
             )}
             {userCurrent?.role === "TEACHER" && (
               <>
-                <Route path="" element={<ManageBTLTeacher></ManageBTLTeacher>}></Route>
+                <Route
+                  path=""
+                  element={<ManageBTLTeacher></ManageBTLTeacher>}
+                ></Route>
                 <Route path="/search" element={<SearchBTL></SearchBTL>}></Route>
               </>
             )}

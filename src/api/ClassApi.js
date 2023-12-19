@@ -37,6 +37,10 @@ const ClassApi = {
     const url = `/classV/checknopbai?classId=${id}`;
     return axiosClients.get(url);
   },
+  checknopbaiSubject: (id) => {
+    const url = `/classV/checknopbaiBySubject?classId=${id}`;
+    return axiosClients.get(url);
+  },
   enable: (id) => {
     const url = `/classV/enableClass?classId=${id}`;
     return axiosClients.get(url);

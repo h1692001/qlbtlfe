@@ -9,6 +9,10 @@ const BTLApi = {
     const url = `/btl?classId=${id}`;
     return axiosClients.get(url);
   },
+  getAllBtlSubject: (id) => {
+    const url = `/btl/getAllBySubject?classId=${id}`;
+    return axiosClients.get(url);
+  },
   changeStatus: (data) => {
     const url = `/btl/changeStatus`;
     return axiosClients.post(url, data);

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Table, Space, Button, Modal, Spin, Input, Select } from 'antd';
+import { Table, Space, Button, Modal, Spin, Input, Select,Tag } from 'antd';
 import { Header } from 'antd/es/layout/layout';
 import ClassApi from '../../api/ClassApi';
 import { useEffect, useState } from 'react';
@@ -17,11 +17,29 @@ const ManageClass = () => {
             key: 'name',
         },
         {
+            title: 'Môn học',
+            key: 'subjectV',
+    
+            render: (data) => <>
+                {data?.subjects?.map(dt => (
+                    <Tag key={Math.random()}>{dt.name}</Tag>
+                ))}
+            </>
+        },
+        {
             title: 'Ngành',
             dataIndex: 'major',
             key: 'major',
             render: (dt) => {
                 return <>{dt.majorName}</>
+            }
+        },
+        {
+            title: 'Khoa',
+            dataIndex: 'faculty',
+            key: 'faculty',
+            render: (dt) => {
+                return <>{dt.name}</>
             }
         },
         {
@@ -160,15 +178,15 @@ const ManageClass = () => {
         initialValues: {
             name: '',
             majorId: undefined,
-            id:"",
-            createdAt:""
+            id: "",
+            createdAt: ""
         },
         validationSchema: SignupSchema,
         onSubmit: async (values) => {
             try {
                 setIsLoading(true);
-                values.id=updateModelInfo.id
-                values.createdAt=updateModelInfo.createdAt
+                values.id = updateModelInfo.id
+                values.createdAt = updateModelInfo.createdAt
                 const res = await ClassApi.updateClass(values);
                 await fetchClasses();
                 Swal.fire("Thành công", "Đã sửa lớp thành công", 'success');

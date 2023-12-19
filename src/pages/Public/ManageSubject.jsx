@@ -1,34 +1,47 @@
 import React from 'react';
-import { Table, Space, Button, Modal, Spin, Input, Select, Tabs } from 'antd';
+import { Table, Space, Button, Modal, Spin, Input, Select, Tabs, Tag } from 'antd';
 import { Header } from 'antd/es/layout/layout';
 import ClassApi from '../../api/ClassApi';
+import SubjectApi from '../../api/SubjectApi';
 import { useEffect, useState } from 'react';
 import MajorApi from '../../api/MajorApi';
 import Swal from 'sweetalert2';
 import UserApi from '../../api/UserApi';
 
-const ClassMember = () => {
+const ManageSubject = () => {
 
     const columns = [
         {
-            title: 'Tên thành viên',
-            dataIndex: 'member',
-            key: 'member',
-            render: (dt) => {
-                return <>{dt.fullname}</>
+            title: 'Tên môn học',
+            dataIndex: 'name',
+            key: 'name'
+        },
+        {
+            title: 'Lớp',
+            key: 'classV',
+            render: (record) => {
+                return <p>{record?.classV?.name}</p>
+            }
+        },
+
+        {
+            title: 'Ngành',
+            key: 'major',
+            render: (record) => {
+                return <p>{record?.classV?.major?.majorName}</p>
             }
         },
         {
-            title: 'Vai trò',
-            dataIndex: 'role',
-            key: 'role',
+            title: 'Giảng viên',
+            key: 'teacher',
+            dataIndex: 'teacher'
         },
         {
             title: '',
             key: 'action',
-            render: () => {
+            render: (record) => {
                 return <Space>
-                    <p className='text-[#1677ff] underline'>Vô hiệu</p>
+                    <p onClick={() => { setIsAddTeacher(true);setSelectedSubject(record) }} className='text-[#1677ff] underline'>Phân công giáo viên</p>
                 </Space>
             }
         },
@@ -45,6 +58,10 @@ const ClassMember = () => {
     const [selecttedTab, setSelectedTab] = useState(1);
     const [selectedUser, setSelectedUser] = useState();
     const [teachers, setTeachers] = useState([]);
+    const [newSubject, setNewSubject] = useState("");
+    const [isAddTeacher, setIsAddTeacher] = useState(false);
+    const [selectedTeacher, setSelectedTeacher] = useState();
+    const [selectedSubject,setSelectedSubject]=useState();
 
     const fetchClasses = async () => {
         try {
@@ -86,7 +103,6 @@ const ClassMember = () => {
                 categoryOption.push({
                     value: dt.id,
                     label: dt.userId,
-
                 })
             })
             setTeachers(categoryOption);
@@ -112,7 +128,7 @@ const ClassMember = () => {
     }
     const fetchMember = async () => {
         try {
-            const res = await ClassApi.getAllMember(selectedClass);
+            const res = await SubjectApi.getAllSubject(selectedClass);
             setMember(res);
         }
         catch (e) {
@@ -129,10 +145,31 @@ const ClassMember = () => {
 
     const addStudent = async () => {
         try {
-            const res = await ClassApi.addMember({ role: 'STUDENT', id: selectedClass, memberId: selectedUser });
+            setIsLoading(true)
+            const res = await SubjectApi.addSubject({ classId: selectedClass, name: newSubject });
             Swal.fire("Thành công", 'Đã thêm thành viên thành công', 'success')
+            setNewStudent("");
+            fetchMember(selectedClass);
+            setIsModalCreateOpen(false);
+            setIsLoading(false)
         }
         catch (e) {
+            setIsLoading(false)
+            Swal.fire("Thất bại", 'Có lỗi xảy ra! Thử lại sau', 'error')
+
+        }
+    }
+    const addTeachers = async () => {
+        try {
+            setIsLoading(true)
+            const res = await SubjectApi.addTeacher({ userId: selectedTeacher, id: selectedSubject?.id });
+            Swal.fire("Thành công", 'Đã thêm giảng viên', 'success')
+            
+            setIsModalCreateOpen(false);
+            setIsLoading(false)
+        }
+        catch (e) {
+            setIsLoading(false)
             Swal.fire("Thất bại", 'Có lỗi xảy ra! Thử lại sau', 'error')
 
         }
@@ -154,7 +191,7 @@ const ClassMember = () => {
     const items = [
         {
             key: '1',
-            label: 'Sinh viên',
+            label: 'Môn học',
             children: (
                 <div className='flex flex-col gap-[20px]'>
                     <Select
@@ -169,54 +206,10 @@ const ClassMember = () => {
                         }
                         onChange={(e) => { setSelectedClass(e) }}
                     ></Select>
-                    <Select
-                        options={students.filter(st => {
-                            const prefixStr2 = st.label.slice(0, 8);
-                            return prefixStr2 === classes.find(cl => cl?.value === selectedClass)?.label;
-                        })}
-                        className='w-full'
-                        showSearch
-                        placeholder="Chọn sinh viên"
-                        optionFilterProp="children"
-                        filterOption={(input, option) => (option?.label.trim().toLowerCase() ?? '').includes(input.trim().toLowerCase())}
-                        filterSort={(optionA, optionB) =>
-                            (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
-                        }
-                        onChange={(e) => { setSelectedUser(e) }}
-                    ></Select>
+                    <Input onChange={(e) => { setNewSubject(e.target.value) }} placeholder='Tên môn học'></Input>
                 </div>
             ),
         },
-        // {
-        //     key: '2',
-        //     label: 'Giảng viên',
-        //     children: <div className='flex flex-col gap-[20px]'>
-        //         <Select
-        //             options={classes}
-        //             className='w-full'
-        //             showSearch
-        //             placeholder="Chọn lớp"
-        //             optionFilterProp="children"
-        //             filterOption={(input, option) => (option?.label.trim().toLowerCase() ?? '').includes(input.trim().toLowerCase())}
-        //             filterSort={(optionA, optionB) =>
-        //                 (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
-        //             }
-        //             onChange={(e) => { setSelectedClass(e) }}
-        //         ></Select>
-        //         <Select
-        //             options={teachers}
-        //             className='w-full'
-        //             showSearch
-        //             placeholder="Chọn sinh viên"
-        //             optionFilterProp="children"
-        //             filterOption={(input, option) => (option?.label.trim().toLowerCase() ?? '').includes(input.trim().toLowerCase())}
-        //             filterSort={(optionA, optionB) =>
-        //                 (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
-        //             }
-        //             onChange={(e) => { setSelectedUser(e) }}
-        //         ></Select>
-        //     </div>,
-        // },
     ];
 
     return <div >
@@ -226,19 +219,26 @@ const ClassMember = () => {
                 if (selectedClass) {
                     fetchMember();
                 }
-            }}>Xem thành viên</Button>
-            <Button type='primary' onClick={() => { setIsModalCreateOpen(true) }}>Thêm thành viên</Button>
+            }}>Xem danh sách môn</Button>
+            <Button type='primary' onClick={() => { setIsModalCreateOpen(true) }}>Thêm môn học</Button>
         </div>
         <Table columns={columns} dataSource={member} />
-        <Modal title='Thêm lớp' open={isModalCreateOpen} onOk={() => {
-                addStudent();
-        
+        <Modal title='Thêm môn học' open={isModalCreateOpen} onOk={() => {
+            addStudent();
+
         }} onCancel={() => setIsModalCreateOpen(false)}>
             <Spin spinning={isLoading}>
                 <Tabs defaultActiveKey="1" items={items} onChange={(e) => { setSelectedTab(e) }} />
             </Spin>
         </Modal>
+        <Modal title='Phân công giáo viên' open={isAddTeacher} onOk={() => {
+            addTeachers();
+        }} onCancel={() => setIsAddTeacher(false)}>
+            <Spin spinning={isLoading}>
+                <Select options={teachers} style={{ width: '100%' }} onChange={(e) => setSelectedTeacher(e)}></Select>
+            </Spin>
+        </Modal>
     </div>
 }
 
-export default ClassMember;
+export default ManageSubject;
