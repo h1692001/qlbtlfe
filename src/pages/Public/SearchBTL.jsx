@@ -2,7 +2,7 @@ import { Table, Space, Button, Modal, Spin, Input, Select, Tag } from 'antd';
 import { useState, useEffect } from 'react';
 import ClassApi from '../../api/ClassApi';
 import BTLApi from "../../api/BTLApi";
-
+import SubjectApi  from '../../api/SubjectApi';
 const SearchBTL = () => {
     const columns = [
         {
@@ -55,7 +55,7 @@ const SearchBTL = () => {
     const [keyword, setKeyword] = useState("");
     const fetchClasses = async () => {
         try {
-            const res = await ClassApi.getAllClass();
+            const res = await SubjectApi.getAll();
             const categoryOption = [];
             res.forEach(dt => {
                 categoryOption.push({
@@ -88,7 +88,7 @@ const SearchBTL = () => {
     return <div>
         <div className='flex gap-[20px]'>
             <Input className='w-[300px]' placeholder='Nhập tên bài tập lớn' onChange={(e) => { setKeyword(e.target.value) }}></Input>
-            <Select options={classes} className='w-[300px]' placeholder='Chọn lớp' onChange={(e) => { setSelectedClass(e) }}></Select>
+            <Select options={classes} className='w-[300px]' placeholder='Chọn môn' onChange={(e) => { setSelectedClass(e) }}></Select>
         </div>
         <div className='mt-[20px]'>
             <Table columns={columns} dataSource={searchBTL} />

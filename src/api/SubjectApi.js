@@ -4,6 +4,10 @@ const SubjectApi = {
     const url = `/subject/getAllByClassV?classId=${data}`;   
     return axiosClients.get(url);
   },
+  getAll: (data) => {
+    const url = `/subject/getAll`;   
+    return axiosClients.get(url);
+  },
   getAllSubjectByUser: (data) => {
     const url = `/subject/getAllByUser?userId=${data}`;   
     return axiosClients.get(url);
