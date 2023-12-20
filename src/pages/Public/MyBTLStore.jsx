@@ -126,7 +126,7 @@ const ManageBTLStore = () => {
     }
     const fetchMember = async () => {
         try {
-            const res = await ClassApi.checknopbaiSubject(selectedClass);
+            const res = await ClassApi.getMembersStudentSubject(selectedClass);
             const categoryOption = [];
             res.forEach(dt => {
                 categoryOption.push({

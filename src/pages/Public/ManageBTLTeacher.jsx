@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import ClassApi from '../../api/ClassApi';
 import BTLApi from '../../api/BTLApi';
 import { useSelector } from 'react-redux';
+import SubjectApi from '../../api/SubjectApi';
 
 
 const ManageBTLTeacher = () => {
@@ -128,7 +129,7 @@ const ManageBTLTeacher = () => {
     const [tab, setTab] = useState(1);
     const fetchBtl = async () => {
         try {
-            const res = await BTLApi.getAllBtl(selectedClass);
+            const res = await BTLApi.getAllBtlSubject(selectedClass);
 
             setBtl(res);
         } catch (e) {
@@ -138,7 +139,7 @@ const ManageBTLTeacher = () => {
 
     const fetchNopbai = async () => {
         try {
-            const res = await ClassApi.checknopbai(selectedClass);
+            const res = await ClassApi.checknopbaiSubject(selectedClass);
             setNopbai(res);
         } catch (e) {
 
@@ -148,7 +149,7 @@ const ManageBTLTeacher = () => {
     const [btl, setBtl] = useState([]);
     const fetchClasses = async () => {
         try {
-            const res = await ClassApi.getAllByUser(userCurrent?.id);
+            const res = await SubjectApi.getAllSubjectByUser(userCurrent?.id);
             const categoryOption = [];
             res.forEach(dt => {
                 categoryOption.push({
@@ -167,7 +168,7 @@ const ManageBTLTeacher = () => {
     }, [])
     return <div >
         <div className='py-[12px] flex gap-[20px]'>
-            <Select className='w-[300px]' options={classes} placeholder='Chọn lớp' onChange={(e) => { setSelectedClass(e) }}></Select>
+            <Select className='w-[300px]' options={classes} placeholder='Chọn môn học' onChange={(e) => { setSelectedClass(e) }}></Select>
             <Button type='primary' onClick={() => {
                 if (selectedClass) {
                     fetchBtl();

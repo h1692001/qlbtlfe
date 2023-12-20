@@ -18,7 +18,7 @@ const BTLApi = {
     return axiosClients.post(url, data);
   },
   search: (data) => {
-    const url = `/btl/searchBTL?name=${data?.name}&classId=${data?.classId}`;
+    const url = `/btl/searchBTL?name=${data?.name}&subjectId=${data?.classId}`;
     return axiosClients.get(url);
   },
 };

@@ -147,7 +147,7 @@ const ManageSubject = () => {
         try {
             setIsLoading(true)
             const res = await SubjectApi.addSubject({ classId: selectedClass, name: newSubject });
-            Swal.fire("Thành công", 'Đã thêm thành viên thành công', 'success')
+            Swal.fire("Thành công", 'Đã thêm môn học thành công', 'success')
             setNewStudent("");
             fetchMember(selectedClass);
             setIsModalCreateOpen(false);
@@ -165,7 +165,8 @@ const ManageSubject = () => {
             const res = await SubjectApi.addTeacher({ userId: selectedTeacher, id: selectedSubject?.id });
             Swal.fire("Thành công", 'Đã thêm giảng viên', 'success')
             
-            setIsModalCreateOpen(false);
+            setIsAddTeacher(false);
+            fetchMember();
             setIsLoading(false)
         }
         catch (e) {

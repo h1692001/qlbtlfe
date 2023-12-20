@@ -50,7 +50,7 @@ const SearchBTL = () => {
     ];
 
     const [classes, setClasses] = useState([]);
-    const [selectedClass, setSelectedClass] = useState(null);
+    const [selectedClass, setSelectedClass] = useState(-1);
     const [searchBTL, setSearchBTL] = useState([]);
     const [keyword, setKeyword] = useState("");
     const fetchClasses = async () => {

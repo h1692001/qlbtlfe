@@ -33,6 +33,10 @@ const ClassApi = {
     const url = `/classV/getMembersStudent?classId=${id}`;
     return axiosClients.get(url);
   },
+  getMembersStudentSubject: (id) => {
+    const url = `/classV/getMembersStudentSubject?classId=${id}`;
+    return axiosClients.get(url);
+  },
   checknopbai: (id) => {
     const url = `/classV/checknopbai?classId=${id}`;
     return axiosClients.get(url);
