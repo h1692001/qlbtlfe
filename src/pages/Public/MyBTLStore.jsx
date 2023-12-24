@@ -25,11 +25,11 @@ const ManageBTLStore = () => {
             dataIndex: 'publisher',
             render: (data) => <>
                 {data.map(dt => (
-                    <Tag key={dt.userId}>{dt.userId}</Tag>
+                    <Tag key={Math.random()}>{dt.userId}</Tag>
                 ))}
             </>
         },
-        
+
         {
             title: 'Ngày đăng',
             key: 'createdAt',
@@ -47,7 +47,7 @@ const ManageBTLStore = () => {
                 return formattedDateString;
             }
         },
-        
+
         {
             title: 'Trạng thái',
             dataIndex: 'status',
@@ -81,7 +81,43 @@ const ManageBTLStore = () => {
             dataIndex: 'member',
             render: (dt) => (<>{dt.userId}</>)
         },
-        
+
+        {
+            title: 'Trạng thái nộp',
+            key: 'isSubmit',
+            dataIndex: 'isSubmit',
+            render: (dt) => (<>{dt === 1 ? "Đã nộp" : "Chưa nộp"}</>)
+        },
+        {
+            title: 'Ngày nộp',
+            key: 'submittedAt',
+            dataIndex: 'submittedAt',
+            render: (dt) => {
+                if (dt) {
+                    const inputDate = new Date(dt);
+                    const year = inputDate.getFullYear();
+                    const month = String(inputDate.getMonth() + 1).padStart(2, '0');
+                    const day = String(inputDate.getDate()).padStart(2, '0');
+                    const formattedDateString = `${year}/${month}/${day}`;
+                    return formattedDateString;
+                }
+            }
+        },
+
+    ];
+
+    const columnsNhomCheckdanop = [
+        {
+            title: 'Tên nhóm ',
+            dataIndex: 'name',
+            key: 'name',
+        },
+
+        {
+            title: 'Thành viên',
+            key: 'member2',
+            render: (dt) => dt?.memberGroup?.map(ss => <Tag key={Math.random()}>{ss.member.fullname}</Tag>)
+        },
         {
             title: 'Trạng thái nộp',
             key: 'isSubmit',
@@ -116,6 +152,8 @@ const ManageBTLStore = () => {
     const [btlName, setBtlName] = useState("");
     const [nopbai, setNopbai] = useState([]);
     const [tab, setTab] = useState(1);
+    const [groups, setGroups] = useState([]);
+    const [selectedClass2, setSelectedCLass2] = useState();
     const fetchNopbai = async () => {
         try {
             const res = await ClassApi.checknopbaiSubject(selectedClass);
@@ -145,14 +183,8 @@ const ManageBTLStore = () => {
     const fetchClasses = async () => {
         try {
             const res = await SubjectApi.getAllSubjectByUser(userCurrent?.id);
-            const categoryOption = [];
-            res.forEach(dt => {
-                categoryOption.push({
-                    value: dt.id,
-                    label: dt.name
-                })
-            })
-            setClasses(categoryOption);
+
+            setClasses(res);
         } catch (e) {
 
         }
@@ -179,8 +211,8 @@ const ManageBTLStore = () => {
             setIsLoading(true);
             const formDt = new FormData();
             formDt.append("file", file);
-            formDt.append("uploader", selectedStudents);
-            formDt.append("classV", selectedClass);
+            formDt.append("uploader", userCurrent?.id);
+            formDt.append("classV", selectedClass2.id);
             formDt.append("name", btlName);
             const res = await BTLApi.uploadBTL(formDt);
             setIsLoading(false);
@@ -193,10 +225,10 @@ const ManageBTLStore = () => {
 
         }
     }
-
+    
     return <div >
         <div className='py-[12px] flex gap-[20px]'>
-            <Select className='w-[300px]' options={classes} placeholder='Chọn môn' onChange={(e) => { setSelectedClass(e) }}></Select>
+            <Select className='w-[300px]' options={classes?.map(cl => ({ value: cl.id, label: cl.name }))} placeholder='Chọn môn' onChange={(e) => { setSelectedClass(e); setNopbai([]); }}></Select>
             <Button type='primary' onClick={() => {
                 if (selectedClass) {
                     fetchBtl();
@@ -212,7 +244,7 @@ const ManageBTLStore = () => {
             }}>Xem tình trạng nộp bài</Button>
         </div>
         {tab === 1 && <Table columns={columns} dataSource={btl} />}
-        {tab === 2 && <Table columns={columnsCheckdanop} dataSource={nopbai} />}
+        {tab === 2 && <Table columns={classes.find(cl => cl.id === selectedClass).subjectType === "person" ? columnsCheckdanop : columnsNhomCheckdanop} dataSource={nopbai} />}
         <Modal title='Nộp bài tập' open={isModalCreateOpen} onOk={() => { uploadBTL() }} onCancel={() => setIsModalCreateOpen(false)}>
             <Spin spinning={isLoading}>
                 <div className='flex flex-col gap-[20px]'>
@@ -222,7 +254,7 @@ const ManageBTLStore = () => {
                         onChange={(e) => { setBtlName(e.target.value) }}
                     ></Input>
                     <Select
-                        options={classes}
+                        options={classes?.map(cl => ({ value: cl.id, label: cl.name }))}
                         className='w-full'
                         showSearch
                         placeholder="Chọn môn"
@@ -231,23 +263,8 @@ const ManageBTLStore = () => {
                         filterSort={(optionA, optionB) =>
                             (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
                         }
-                        onChange={(e) => { setSelectedClass(e) }}
+                        onChange={(e) => { setSelectedCLass2(classes.find(cl=>cl.id===e));  }}
                     ></Select>
-
-                    <Select
-                        mode="multiple"
-                        options={students}
-                        className='w-full'
-                        showSearch
-                        placeholder="Chọn sinh viên nộp"
-                        optionFilterProp="children"
-                        filterOption={(input, option) => (option?.label.trim().toLowerCase() ?? '').includes(input.trim().toLowerCase())}
-                        filterSort={(optionA, optionB) =>
-                            (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
-                        }
-                        onChange={(e) => { setSelectedStudents(e) }}
-                    ></Select>
-
                     <div>
                         <p style={{ marginBottom: '10px', fontWeight: '500', fontSize: '16px' }}>Chọn bài tập lớn</p>
                         <input type='file' placeholder='Chọn bài tập lớn' onChange={(e) => { setFile(e.target.files[0]) }}></input>

@@ -157,6 +157,7 @@ const ManageClass = () => {
         initialValues: {
             name: '',
             majorId: undefined,
+            
         },
         validationSchema: SignupSchema,
         onSubmit: async (values) => {

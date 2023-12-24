@@ -23,7 +23,18 @@ const ManageSubject = () => {
                 return <p>{record?.classV?.name}</p>
             }
         },
-
+        {
+            title: 'Mã môn',
+            key: 'subjectId',
+            dataIndex: "subjectId"
+        },
+        {
+            title: 'Hình thức nộp',
+            key: 'subjectType',
+            render: (record) => {
+                return <p>{record?.subjectType === "group" ? "Theo nhóm" : "Cá nhân"}</p>
+            }
+        },
         {
             title: 'Ngành',
             key: 'major',
@@ -41,7 +52,7 @@ const ManageSubject = () => {
             key: 'action',
             render: (record) => {
                 return <Space>
-                    <p onClick={() => { setIsAddTeacher(true);setSelectedSubject(record) }} className='text-[#1677ff] underline'>Phân công giáo viên</p>
+                    <p onClick={() => { setIsAddTeacher(true); setSelectedSubject(record) }} className='text-[#1677ff] underline'>Phân công giáo viên</p>
                 </Space>
             }
         },
@@ -61,7 +72,7 @@ const ManageSubject = () => {
     const [newSubject, setNewSubject] = useState("");
     const [isAddTeacher, setIsAddTeacher] = useState(false);
     const [selectedTeacher, setSelectedTeacher] = useState();
-    const [selectedSubject,setSelectedSubject]=useState();
+    const [selectedSubject, setSelectedSubject] = useState();
 
     const fetchClasses = async () => {
         try {
@@ -146,7 +157,7 @@ const ManageSubject = () => {
     const addStudent = async () => {
         try {
             setIsLoading(true)
-            const res = await SubjectApi.addSubject({ classId: selectedClass, name: newSubject });
+            const res = await SubjectApi.addSubject({ classId: selectedClass, ...newSubject });
             Swal.fire("Thành công", 'Đã thêm môn học thành công', 'success')
             setNewStudent("");
             fetchMember(selectedClass);
@@ -164,7 +175,7 @@ const ManageSubject = () => {
             setIsLoading(true)
             const res = await SubjectApi.addTeacher({ userId: selectedTeacher, id: selectedSubject?.id });
             Swal.fire("Thành công", 'Đã thêm giảng viên', 'success')
-            
+
             setIsAddTeacher(false);
             fetchMember();
             setIsLoading(false)
@@ -207,7 +218,27 @@ const ManageSubject = () => {
                         }
                         onChange={(e) => { setSelectedClass(e) }}
                     ></Select>
-                    <Input onChange={(e) => { setNewSubject(e.target.value) }} placeholder='Tên môn học'></Input>
+                    <Input onChange={(e) => { setNewSubject(prev => ({ ...prev, name: e.target.value })) }} placeholder='Tên môn học'></Input>
+                    <Input onChange={(e) => { setNewSubject(prev => ({ ...prev, subjectId: e.target.value })) }} placeholder='Mã môn học'></Input>
+                    <Select
+                        options={[{
+                            value: "group",
+                            label: "Theo nhóm"
+                        },
+                        {
+                            value: "person",
+                            label: "Cá nhân"
+                        }]}
+                        className='w-full'
+                        showSearch
+                        placeholder="Hình thức nộp"
+                        optionFilterProp="children"
+                        filterOption={(input, option) => (option?.label.trim().toLowerCase() ?? '').includes(input.trim().toLowerCase())}
+                        filterSort={(optionA, optionB) =>
+                            (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
+                        }
+                        onChange={(e) => { setNewSubject(prev => ({ ...prev, subjectType: e })) }}
+                    ></Select>
                 </div>
             ),
         },
@@ -226,7 +257,6 @@ const ManageSubject = () => {
         <Table columns={columns} dataSource={member} />
         <Modal title='Thêm môn học' open={isModalCreateOpen} onOk={() => {
             addStudent();
-
         }} onCancel={() => setIsModalCreateOpen(false)}>
             <Spin spinning={isLoading}>
                 <Tabs defaultActiveKey="1" items={items} onChange={(e) => { setSelectedTab(e) }} />

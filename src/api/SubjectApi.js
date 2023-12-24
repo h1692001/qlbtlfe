@@ -20,6 +20,10 @@ const SubjectApi = {
     const url = `/subject`;   
     return axiosClients.put(url,data);
   },
+  addGroup: (data) => {
+    const url = `/subject/addGroup`;   
+    return axiosClients.put(url,data);
+  },
 };
 
 export default SubjectApi;
