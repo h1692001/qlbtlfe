@@ -65,9 +65,9 @@ const ManageTeacher = () => {
             key: 'action',
             render: (_, record) => {
                 return <Space>
-                    <a href={record.path} target='_blank' className='text-[#1677ff] underline' >Tải về</a>
+                    <a href={record.path} target='_blank' className='text-[#1677ff] underline  cursor-pointer' >Tải về</a>
                     {record?.status === "PENDING" && <>
-                        <p className='text-[#77dd77] underline'
+                        <p className='text-[#77dd77] underline  cursor-pointer'
                             onClick={async () => {
                                 try {
                                     const res = await BTLApi.changeStatus({ id: record.id, status: "APPROVE" });
@@ -77,7 +77,7 @@ const ManageTeacher = () => {
 
                                 }
                             }}>Duyệt</p>
-                        <p className='text-[#d40a00] underline'
+                        <p className='text-[#d40a00] underline  cursor-pointer'
                             onClick={async () => {
                                 try {
                                     const res = await BTLApi.changeStatus({ id: record.id, status: "CANCEL" });
@@ -137,6 +137,7 @@ const ManageTeacher = () => {
         },
 
     ];
+    
 
     const [classes, setClasses] = useState([]);
     const [selectedClass, setSelectedClass] = useState();

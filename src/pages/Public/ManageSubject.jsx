@@ -52,7 +52,7 @@ const ManageSubject = () => {
             key: 'action',
             render: (record) => {
                 return <Space>
-                    <p onClick={() => { setIsAddTeacher(true); setSelectedSubject(record) }} className='text-[#1677ff] underline'>Phân công giáo viên</p>
+                    <p onClick={() => { setIsAddTeacher(true); setSelectedSubject(record) }} className='text-[#1677ff] underline  cursor-pointer'>Phân công giáo viên</p>
                 </Space>
             }
         },

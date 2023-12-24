@@ -28,7 +28,7 @@ const ClassMember = () => {
             key: 'action',
             render: () => {
                 return <Space>
-                    <p className='text-[#1677ff] underline'>Vô hiệu</p>
+                    <p className='text-[#1677ff] underline  cursor-pointer'>Vô hiệu</p>
                 </Space>
             }
         },
@@ -170,10 +170,7 @@ const ClassMember = () => {
                         onChange={(e) => { setSelectedClass(e) }}
                     ></Select>
                     <Select
-                        options={students.filter(st => {
-                            const prefixStr2 = st.label.slice(0, 8);
-                            return prefixStr2 === classes.find(cl => cl?.value === selectedClass)?.label;
-                        })}
+                        options={students}
                         className='w-full'
                         showSearch
                         placeholder="Chọn sinh viên"

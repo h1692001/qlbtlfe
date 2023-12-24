@@ -61,7 +61,7 @@ const ManageBTLStore = () => {
             key: 'action',
             render: (_, record) => {
                 return <Space>
-                    <a href={record.path} target='_blank' className='text-[#1677ff] underline' >Tải về</a>
+                    <a href={record.path} target='_blank' className='text-[#1677ff] underline  cursor-pointer' >Tải về</a>
                 </Space>
             }
         },

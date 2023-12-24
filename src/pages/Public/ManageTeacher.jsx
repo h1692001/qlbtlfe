@@ -47,12 +47,12 @@ const ManageTeacher = () => {
             key: 'action',
             render: (record) => {
                 return <Space>
-                    <p className='text-[#1677ff] underline'
+                    <p className='text-[#1677ff] underline cursor-pointer'
                         onClick={() => {
                             setShowUpdateClassModal(true);
                             setUpdateModalInfo(record)
                         }}>Cập nhật</p>
-                    {record.status !== 1 && <p className='text-[#1677ff] underline'
+                    {record.status !== 1 && <p className='text-[#1677ff] underline  cursor-pointer'
                         onClick={async () => {
                             try {
                                 const res = await UserApi.disable(record.id);
@@ -64,7 +64,7 @@ const ManageTeacher = () => {
 
                             }
                         }}>Vô hiệu</p>}
-                    {record.status === 1 && <p className='text-[#1677ff] underline'
+                    {record.status === 1 && <p className='text-[#1677ff] underline  cursor-pointer'
                         onClick={async () => {
                             try {
                                 const res = await UserApi.enable(record.id);
