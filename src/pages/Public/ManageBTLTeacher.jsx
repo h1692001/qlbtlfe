@@ -258,7 +258,7 @@ const ManageBTLTeacher = () => {
             addGroup();
         }} onCancel={() => setShowModal(false)}>
             <Spin spinning={isLoading}>
-                <Select className='w-[300px]' options={classes?.filter(cl => { console.log(cl);; return cl.subjectType === "group" })?.map(cl => { return { value: cl.id, label: cl.name } })} placeholder='Chọn môn học' style={{ width: '100%', marginTop: '10px' }} onChange={(e) => { setSelectedClass(e); setNewGroup(prev => ({ ...prev, id: e })) }}></Select>
+                <Select className='w-[300px]' options={classes?.filter(cl => { console.log(cl);; return cl.subjectType === "group" })?.map(cl => { return { value: cl.id, label: cl.name+"-"+cl.role } })} placeholder='Chọn môn học' style={{ width: '100%', marginTop: '10px' }} onChange={(e) => { setSelectedClass(e); setNewGroup(prev => ({ ...prev, id: e })) }}></Select>
                 <Input style={{ width: '100%', marginTop: '10px' }} placeholder='Tên nhóm' onChange={(e) => { setNewGroup(prev => ({ ...prev, name: e.target.value })) }}></Input>
                 <Select
                     mode="multiple"

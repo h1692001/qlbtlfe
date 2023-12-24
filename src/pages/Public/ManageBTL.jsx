@@ -9,7 +9,21 @@ import { saveAs } from 'file-saver';
 
 
 const ManageTeacher = () => {
+    const [classes, setClasses] = useState([]);
+    const [selectedClass, setSelectedClass] = useState();
+    const [nopbai, setNopbai] = useState([]);
+    const uniqueNamesMap = new Map();
 
+    const newArray = nopbai?.reduce((acc, obj) => {
+        const name = obj.name;
+
+        if (!uniqueNamesMap.has(name)) {
+            uniqueNamesMap.set(name, { text: name, value: name });
+            acc.push(uniqueNamesMap.get(name));
+        }
+        return acc;
+    }, []);
+    
     const columns = [
         {
             title: 'Tên Bài tập lớn',
@@ -33,7 +47,12 @@ const ManageTeacher = () => {
             dataIndex: 'subjectDTO',
             render: (data) => {
                 return <p>{data?.name}</p>
-            }
+            },
+            filterSearch: true,
+            filters: newArray.map((value) => value),
+            onFilter: (value, record) => {
+                return record.fullname === value;
+            },
         },
         {
             title: 'Ngày đăng',
@@ -112,6 +131,11 @@ const ManageTeacher = () => {
             title: 'Môn',
             key: 'name',
             dataIndex: 'name',
+            filterSearch: true,
+            filters: newArray.map((value) => value),
+            onFilter: (value, record) => {
+                return record.name === value;
+            },
 
         },
         {
@@ -137,11 +161,8 @@ const ManageTeacher = () => {
         },
 
     ];
-    
 
-    const [classes, setClasses] = useState([]);
-    const [selectedClass, setSelectedClass] = useState();
-    const [nopbai, setNopbai] = useState([]);
+    
     const [tab, setTab] = useState(1);
     const fetchBtl = async () => {
         try {
